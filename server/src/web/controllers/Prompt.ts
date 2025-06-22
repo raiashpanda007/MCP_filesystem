@@ -25,13 +25,27 @@ const promptController = asyncHandler(async (req, res) => {
                 {
                     role: "system",
                     content: `
-You are a helpful assistant who receives user instructions and returns a JSON like this:
+You are a strict JSON-only assistant for file operations. Based on the user's natural language instructions, return a valid JSON object in the following format:
+
 {
-  "action": "create" | "edit" | "append" | "delete",
+  "action": "create" | "rename" | "append" | "delete",
   "filename": "string",
-  "content": "string (optional for delete)"
+  "content": "string" // required for all actions except delete
 }
-Do NOT explain anything. Just return pure JSON.
+
+Rules:
+- Only return raw JSON — no explanations, no markdown, no backticks.
+- Use double quotes for all strings.
+- Escape all inner quotes properly (e.g., \").
+- If the user forgets to provide file content only and only if the user forgets to add than add these else no need to just keep the users content:
+  - For "create", default to: "content": "happy to create this file"
+  - For "rename" (renaming), default to: "content": "oldfile_renamed" (you can choose a better name based on context)
+- Do not leave any fields undefined.
+- Always validate that the output is parseable JSON.
+- Even in case of rename please parse the new name in "content" key of the returning json
+
+Never include any commentary or formatting outside the JSON.
+
         `.trim(),
                 },
                 {
@@ -52,6 +66,7 @@ Do NOT explain anything. Just return pure JSON.
     if (!aiReply) {
         return res.status(400).json({ error: "No content from model" });
     }
+    console.log("AI  reply for ",id,'with json ' , aiReply)
 
     let parsed;
     try {
@@ -78,16 +93,16 @@ Do NOT explain anything. Just return pure JSON.
                 name: "create_file",
                 arguments: {
                     filename,
-                    folderId: '1234',
+                    folderId: id,
                     content
                 }
             });
-        } else if (action === "edit") {
+        } else if (action === "rename") {
             const result = await client.callTool({
                 name: "edit_file",
                 arguments: {
                     filename,
-                    folderId: '1234',
+                    folderId: id,
                     content
                 }
             })
@@ -96,7 +111,7 @@ Do NOT explain anything. Just return pure JSON.
                 name: "edit_file_content",
                 arguments: {
                     filename,
-                    folderId:'1234',
+                    folderId: id,
                     content
                 }
             })
@@ -105,8 +120,7 @@ Do NOT explain anything. Just return pure JSON.
                 name: "delete_file",
                 arguments: {
                     filename,
-                    folderId:'12',
-                    content
+                    folderId: id
                 }
             })
         } else {

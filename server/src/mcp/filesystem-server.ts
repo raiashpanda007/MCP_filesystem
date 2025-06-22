@@ -20,10 +20,13 @@ const createFile = async (folderId: string, filename: string, content: string) =
   return `File \"${filename}\" created successfully in folder \"${folderId}\".`;
 };
 
-const editFile = async (folderId: string, filename: string, content: string) => {
-  const fullPath = path.join(baseDir, folderId, filename);
-  await fs.writeFile(fullPath, content);
-  return `File \"${filename}\" edited successfully.`;
+const editFile = async (folderId: string, oldFilename: string, newFilename: string) => {
+  const oldPath = path.join(baseDir, folderId, oldFilename);
+  const newPath = path.join(baseDir, folderId, newFilename);
+
+  await fs.rename(oldPath, newPath);
+
+  return `File renamed from "${oldFilename}" to "${newFilename}" successfully.`;
 };
 
 const editFileContent = async (folderId: string, filename: string, content: string) => {
@@ -34,7 +37,7 @@ const editFileContent = async (folderId: string, filename: string, content: stri
   return `Content appended to file \"${filename}\".`;
 };
 
-const deleteFile = async (folderId: string, filename: string, _content: string) => {
+const deleteFile = async (folderId: string, filename: string, ) => {
   const fullPath = path.join(baseDir, folderId, filename);
   await fs.unlink(fullPath);
   return `File \"${filename}\" deleted successfully.`;
@@ -86,10 +89,10 @@ server.registerTool("edit_file_content", {
 server.registerTool("delete_file", {
   title: 'Delete File',
   description: "Delete File ",
-  inputSchema: { folderId: z.string(), filename: z.string(), content: z.string() }
+  inputSchema: { folderId: z.string(), filename: z.string() }
 },
-  async ({ folderId, filename, content }) => {
-    const ans = await deleteFile(folderId, filename, content);
+  async ({ folderId, filename }) => {
+    const ans = await deleteFile(folderId, filename);
     return {
       content: [
         { type: "text", text: ans }
