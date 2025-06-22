@@ -7,10 +7,10 @@ import dotenv from 'dotenv';
 import Response from '../utils/response';
 
 
-const ASSETS_DIR = path.join(process.cwd(), 'assets');
+const ASSETS_DIR = path.join(process.cwd(), '/src/assets');
 const uploadFolder = asyncHandler(async (req, res) => {
     if (!req.file)  return res.status(400).json(new Response(400, 'No file uploaded', null));
-        const id = uuidv4();
+        const id = '1234';
         const folderPath = path.join(ASSETS_DIR, id);
         await fs.mkdir(folderPath, { recursive: true });
 

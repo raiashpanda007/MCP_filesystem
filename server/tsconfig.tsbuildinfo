@@ -1,1 +1,1 @@
-{"root":["./src/web/index.ts","./src/web/controllers/Prompt.ts","./src/web/controllers/UploadFolder.ts","./src/web/utils/asyncHandler.ts","./src/web/utils/response.ts"],"version":"5.6.3"}
+{"root":["./src/index.ts","./src/mcp/filesystem-server.ts","./src/mcp/tools.ts","./src/web/controllers/Prompt.ts","./src/web/controllers/UploadFolder.ts","./src/web/utils/asyncHandler.ts","./src/web/utils/response.ts"],"version":"5.6.3"}

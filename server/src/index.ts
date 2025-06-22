@@ -6,9 +6,9 @@ import path from 'path';
 import fs from 'fs/promises';
 import {config} from 'dotenv';
 import axios from 'axios';
-import Response from './utils/response';
-import uploadFolder from './controllers/UploadFolder';
-import promptController from './controllers/Prompt';
+import Response from './web/utils/response';
+import uploadFolder from './web/controllers/UploadFolder';
+import promptController from './web/controllers/Prompt';
 
 config();
 
