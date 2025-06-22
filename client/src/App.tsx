@@ -42,7 +42,7 @@ export default function App() {
 
   const handleDownload = () => {
     if (!folderId) return;
-    window.open(`/api/download/${folderId}`, "_blank");
+    window.open(`http://localhost:4000/download/${folderId}`, "_blank");
   };
 
   const reset = () => {
